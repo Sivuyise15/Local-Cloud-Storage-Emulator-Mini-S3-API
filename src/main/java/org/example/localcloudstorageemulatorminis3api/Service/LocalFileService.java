@@ -1,0 +1,40 @@
+package org.example.localcloudstorageemulatorminis3api.Service;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+@Service
+public class LocalFileService implements FileService {
+
+    private final Path rootDirectory;
+
+    public LocalFileService(@Value("${storage.root.path}") String rootPath) {
+        this.rootDirectory = Paths.get(rootPath);
+        try {
+            Files.createDirectories(rootDirectory); // ensure the root dir exists
+        } catch (IOException e) {
+            throw new RuntimeException("Could not initialize storage root", e);
+        }
+    }
+
+    @Override
+    public boolean deleteFile(String filename){
+        try {
+            Path filePath = rootDirectory.resolve(filename);
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not delete file: " + filename, e);
+        }
+        return false;
+    }
+
+    @Override
+    public Path getFilePath(String filename){
+        return rootDirectory.resolve(filename).normalize();
+    }
+}
