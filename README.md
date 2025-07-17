@@ -1,0 +1,2 @@
+Lightweight cloud storage emulator built with Java and Spring Boot, designed to run on local machine and be accessible from any device on the same network.
+This project simulates key features of services like AWS S3. It stems from that I cant personally take my laptop with me to campus(Broke it and I use it via monitor) so I need a way to access my local storage.
