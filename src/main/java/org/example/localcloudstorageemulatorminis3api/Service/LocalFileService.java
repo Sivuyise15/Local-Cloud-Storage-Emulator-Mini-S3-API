@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 @Service
 public class LocalFileService implements FileService {
@@ -23,14 +24,25 @@ public class LocalFileService implements FileService {
     }
 
     @Override
-    public boolean deleteFile(String filename){
+    public Stream<Path> listFiles() {
+        try {
+            return Files.walk(rootDirectory, 1)
+                    .filter(path -> !path.equals(rootDirectory))
+                    .map(rootDirectory::relativize);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to list files", e);
+        }
+    }
+
+    @Override
+    public void deleteFile(String filename){
         try {
             Path filePath = rootDirectory.resolve(filename);
             Files.deleteIfExists(filePath);
+            System.out.println("File deleted: " + filePath);
         } catch (IOException e) {
             throw new RuntimeException("Could not delete file: " + filename, e);
         }
-        return false;
     }
 
     @Override

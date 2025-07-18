@@ -1,10 +1,11 @@
 package org.example.localcloudstorageemulatorminis3api.Service;
 import java.io.*;
 import java.nio.file.Path;
-import java.util.List;
+import java.util.stream.Stream;
 
 public interface FileService {
 
-    boolean deleteFile(String filename) throws IOException;
+    Stream<Path> listFiles();
+    void deleteFile(String filename) throws IOException;
     Path getFilePath(String filename);
 }
