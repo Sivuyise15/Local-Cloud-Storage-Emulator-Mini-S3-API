@@ -24,11 +24,17 @@ public class LocalFileService implements FileService {
     }
 
     @Override
-    public Stream<Path> listFiles() {
+    public Stream<Path> listFiles(String subDirectory) {
         try {
-            return Files.walk(rootDirectory, 1)
-                    .filter(path -> !path.equals(rootDirectory))
-                    .map(rootDirectory::relativize);
+
+            Path actualPath = (subDirectory == null || subDirectory.isBlank())
+                    ? rootDirectory
+                    : rootDirectory.resolve(subDirectory);
+
+            System.out.println(actualPath);
+            return Files.walk(actualPath, 1)
+                    .filter(path -> !path.equals(actualPath))
+                    .map(actualPath::relativize);
         } catch (IOException e) {
             throw new RuntimeException("Failed to list files", e);
         }
@@ -37,12 +43,17 @@ public class LocalFileService implements FileService {
     @Override
     public void deleteFile(String filename){
         try {
-            Path filePath = rootDirectory.resolve(filename);
+            Path filePath = getFilePath(filename);
             Files.deleteIfExists(filePath);
             System.out.println("File deleted: " + filePath);
         } catch (IOException e) {
             throw new RuntimeException("Could not delete file: " + filename, e);
         }
+    }
+
+    @Override
+    public void downloadFile(String filename) throws IOException {
+        Path filePath = rootDirectory.resolve(filename);
     }
 
     @Override

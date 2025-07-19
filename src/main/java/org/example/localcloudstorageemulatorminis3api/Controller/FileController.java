@@ -22,10 +22,10 @@ public class FileController {
 
     /* Listing the files **/
     @GetMapping
-    public ResponseEntity<List<String>> listFiles() {
-        try (Stream<Path> fileStream = fileService.listFiles()) {
+    public ResponseEntity<List<String>> listFiles(@RequestParam(value = "path", required = false) String subDirectory) {
+        try (Stream<Path> fileStream = fileService.listFiles(subDirectory)) {
             List<String> files = fileStream
-                    .map(Path::toString)
+                    .map(Path::toString) // map(Path -> Path.toString()), Practising shorthands
                     .collect(Collectors.toList());
             return ResponseEntity.ok(files);
         } catch (Exception e) {
@@ -35,7 +35,7 @@ public class FileController {
     }
 
     /* Deleting a specified file **/
-    @DeleteMapping("/{filename:.+}")
+    @DeleteMapping("/delete/{filename}")
     public ResponseEntity<String> deleteFile(@PathVariable String filename) {
         try {
             fileService.deleteFile(filename);
