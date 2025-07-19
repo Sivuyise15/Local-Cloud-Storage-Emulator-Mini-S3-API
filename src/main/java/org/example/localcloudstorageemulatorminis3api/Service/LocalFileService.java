@@ -3,6 +3,8 @@ package org.example.localcloudstorageemulatorminis3api.Service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,8 +54,19 @@ public class LocalFileService implements FileService {
     }
 
     @Override
-    public void downloadFile(String filename) throws IOException {
+    public void downloadFile(String filename, String outputFile) throws IOException {
         Path filePath = rootDirectory.resolve(filename);
+        Path outputPath = rootDirectory.resolve(outputFile);
+
+        try(FileInputStream fileInputStream = new FileInputStream(filePath.toFile());
+            FileOutputStream fileOutputStream = new FileOutputStream(outputPath.toFile())) {
+            int bytesRead;
+            while((bytesRead = fileInputStream.read()) != -1){
+                // read the bytes to other file
+                fileOutputStream.write(bytesRead);
+            }
+            System.out.println("File downloaded: " + filePath);
+        }
     }
 
     @Override

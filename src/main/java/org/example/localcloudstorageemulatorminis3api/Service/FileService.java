@@ -9,6 +9,6 @@ public interface FileService {
 
     Stream<Path> listFiles(String path);
     void deleteFile(String filename) throws IOException;
-    void downloadFile(String filename) throws IOException;
+    void downloadFile(String filename, String outputFile) throws IOException;
     Path getFilePath(String filename);
 }
