@@ -1,10 +1,14 @@
 package org.example.localcloudstorageemulatorminis3api.Controller;
 
 import org.example.localcloudstorageemulatorminis3api.Service.FileService;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,4 +49,16 @@ public class FileController {
                     .body("Error deleting file: " + e.getMessage());
         }
     }
+
+    /* Downloading the file **/
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadFile(@RequestParam(value = "filename", required = true) String filename) throws IOException {
+        Resource resource = fileService.loadFileAsResource(filename);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
+    }
+
 }
